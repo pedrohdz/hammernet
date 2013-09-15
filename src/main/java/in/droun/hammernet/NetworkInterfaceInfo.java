@@ -9,7 +9,6 @@ package in.droun.hammernet;
 
 import java.math.BigInteger;
 import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -76,29 +75,6 @@ public class NetworkInterfaceInfo {
     }
 
     /**
-     * A wrapper around {@link java.net.NetworkInterface#getNetworkInterfaces()}.
-     *
-     * @return
-     * @throws SocketException
-     */
-    public Enumeration<NetworkInterface> getNetworkInterfaces() throws SocketException {
-        return mInterfaceQuery.getNetworkInterfaces();
-    }
-
-    /**
-     * Returns the numeric representation of this IPv6 address (such as "127.0.0.1").
-     *
-     * @param interfaceName name of interface.
-     *
-     * @return Interface's IP address
-     *
-     * @throws SocketException if a network error occurs.
-     */
-    public String getIp6HostAddressByName(final String interfaceName) throws SocketException {
-        return getHostAddressByName(interfaceName, Inet6Address.class);
-    }
-
-    /**
      * Returns the numeric representation of this IPv4 address (such as
      * "2001:0db8:85a3:0000:0000:8a2e:0370:7334").
      *
@@ -111,6 +87,52 @@ public class NetworkInterfaceInfo {
     public String getIp4HostAddressByName(final String interfaceName) throws SocketException {
         return getHostAddressByName(interfaceName, Inet4Address.class);
     }
+
+    /**
+     * Returns the Wi-Fi interface name on an Android device.
+     *
+     * @return The interface name of the Wi-Fi adapter. If there is no Wi-Fi adapter, null is
+     *         returned. This is typical the case for Android Virtual Machines.
+     *
+     * @throws SocketException
+     *
+     * <!-- CHECKSTYLE.OFF: LineLength - URLs, cannot shorten -->
+     * @see <a
+     * href="http://stackoverflow.com/questions/4677684/wifi-network-interface-name/18657669#18657669">
+     * Stackoverflow: wifi network interface name</a> - for more information.
+     * <!-- CHECKSTYLE.ON: LineLength -->
+     *
+     *
+     */
+    public String getNameByMacAddress(final BigInteger macAddress) throws SocketException {
+
+        if (macAddress == null) {
+            throw new IllegalArgumentException("macAddress is null");
+        }
+
+        // Fetch list of interfaces on the device and iterate
+        String result = null;
+        final Enumeration<NetworkInterface> interfaces = mInterfaceQuery.getNetworkInterfaces();
+        while (interfaces.hasMoreElements()) {
+            final NetworkInterface current = interfaces.nextElement();
+
+            final byte[] hardwareAddress = current.getHardwareAddress();
+            if (hardwareAddress == null) {
+                continue;
+            }
+
+            // Next NOPMD is for AvoidInstantiatingObjectsInLoops, no choice in the matter
+            final BigInteger currentMac = new BigInteger(hardwareAddress); // NOPMD
+            if (currentMac.equals(macAddress)) {
+                // If the current interface's and WiFi MAC match, we have a winner
+                result = current.getName();
+                break;
+            }
+        }
+
+        return result;
+    }
+
 
     /**
      * Returns the numeric representation of this IP address (such as "127.0.0.1"). Can return
@@ -156,7 +178,7 @@ public class NetworkInterfaceInfo {
 
     /**
      * This internal class is only intended to be used in unit testing. It wraps around
-     * {@link java.net.NetworkInterface}.  It basically allows for easier mocking.
+     * {@link java.net.NetworkInterface}. It basically allows for easier mocking.
      */
     protected static class InterfaceQuery {
 
@@ -164,7 +186,9 @@ public class NetworkInterfaceInfo {
          * A wrapper around {@link java.net.NetworkInterface#getByName(java.lang.String)}.
          *
          * @param name
+         *
          * @return
+         *
          * @throws SocketException
          */
         protected NetworkInterface getByName(final String name) throws SocketException {
@@ -175,6 +199,7 @@ public class NetworkInterfaceInfo {
          * A wrapper around {@link java.net.NetworkInterface#getNetworkInterfaces()}.
          *
          * @return
+         *
          * @throws SocketException
          */
         protected Enumeration<NetworkInterface> getNetworkInterfaces() throws SocketException {

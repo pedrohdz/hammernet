@@ -11,9 +11,7 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import java.math.BigInteger;
-import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.util.Enumeration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,28 +70,11 @@ public class AndroidWifiInfo {
 
         // Fetch WiFi MAC address to search on
         final BigInteger wifiMac = wifiMacAddress();
-        String result = null;
+        final String result;
         if (wifiMac != null) {
-
-            // Fetch list of interfaces on the device and iterate
-            final Enumeration<NetworkInterface> interfaces
-                    = mInterfaceInfo.getNetworkInterfaces();
-            NetworkInterface current;
-            while ((current = interfaces.nextElement()) != null) {
-
-                final byte[] hardwareAddress = current.getHardwareAddress();
-                if (hardwareAddress == null) {
-                    continue;
-                }
-
-                // Next NOPMD is for AvoidInstantiatingObjectsInLoops, no choice in the matter
-                final BigInteger currentMac = new BigInteger(hardwareAddress); // NOPMD
-                if (currentMac.equals(wifiMac)) {
-                    // If the current interface's and WiFi MAC match, we have a winner
-                    result = current.getName();
-                    break;
-                }
-            }
+            result = mInterfaceInfo.getNameByMacAddress(wifiMac);
+        } else {
+            result = null;
         }
 
         return result;

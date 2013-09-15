@@ -11,6 +11,8 @@ import org.junit.Test;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.net.SocketException;
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsEqual.*;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -19,13 +21,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.Before;
 
 import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 import org.junit.After;
 
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.Matchers.*;//import static org.mockito.Mockito.*;
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.Matchers.*;
 @RunWith(Enclosed.class)
 public class NetworkInterfaceInfoTest {
 
