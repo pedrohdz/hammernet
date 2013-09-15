@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * {@link  android.content.Context} This class provides a nice wrapper around both when it comes to
  * networking functionality.
  *
- * @author Pedro F. Hernandez <digitalrounin@gmail.com>
+ * @author Pedro F. Hernandez (Digital Rounin)
  */
 public class AndroidWifiInfo {
 

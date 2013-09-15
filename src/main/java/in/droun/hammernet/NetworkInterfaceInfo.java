@@ -16,7 +16,7 @@ import java.util.Enumeration;
 
 /**
  *
- * @author Pedro F. Hernandez <digitalrounin@gmail.com>
+ * @author Pedro F. Hernandez (Digital Rounin)
  */
 public class NetworkInterfaceInfo {
 
