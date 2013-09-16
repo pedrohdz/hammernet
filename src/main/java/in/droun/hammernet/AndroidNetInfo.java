@@ -115,17 +115,28 @@ public class AndroidNetInfo {
     public String getIp4Address(final String defaultInterface) {
         String ipAddress = null;
         try {
+            // Find Wifi IP address
             String interfaceName = wifiInterfaceName();
+
+            // Use defaultInterface if no wifi interface found
             if (interfaceName == null || interfaceName.isEmpty()) {
-                LOG.debug("Using defaultInterfaceName '{}'.", defaultInterface);
                 interfaceName = defaultInterface;
             }
+
+            // Actually get the IP address
             if (interfaceName != null && !interfaceName.isEmpty()) {
                 ipAddress = mInterfaceInfo.getIp4HostAddressByName(interfaceName);
             }
         } catch (SocketException ex) {
             LOG.error("Failed to get WiFi interface name.", ex);
+            ipAddress = null;
+        } catch (IllegalArgumentException ex) {
+            // TODO: 
+            LOG.error("TODO...  Add something...", ex);
+            ipAddress = null;
         }
+
+        // Only ever return an real value or null
         return ipAddress != null && !ipAddress.isEmpty() ? ipAddress : null;
     }
 }
