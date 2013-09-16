@@ -7,12 +7,14 @@
  */
 package in.droun.hammernet;
 
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsEqual.*;
+import static org.hamcrest.core.IsNull.*;
+
 import org.junit.Test;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.net.SocketException;
-import static org.hamcrest.core.Is.*;
-import static org.hamcrest.core.IsEqual.*;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -54,7 +56,7 @@ public class NetworkInterfaceInfoTest {
     }
 
     @RunWith(Parameterized.class)
-    public static class MacAddressToByteArrayIllegalArgumentException {
+    public static class MacAddressToByteArrayBadAddress {
 
         @Parameters(name = "{index}: f({0})")
         public static Iterable<Object[]> data() {
@@ -63,13 +65,13 @@ public class NetworkInterfaceInfoTest {
 
         private final transient String mInput;
 
-        public MacAddressToByteArrayIllegalArgumentException(final String input) {
+        public MacAddressToByteArrayBadAddress(final String input) {
             mInput = input;
         }
 
-        @Test(expected = IllegalArgumentException.class)
+        @Test
         public void macAddressToBigInteger_invalidInput_illegalArgumentException_test() {
-            NetworkInterfaceInfo.macAddressToBigInteger(mInput);
+            assertThat(NetworkInterfaceInfo.macAddressToBigInteger(mInput), is(nullValue()));
         }
     }
 

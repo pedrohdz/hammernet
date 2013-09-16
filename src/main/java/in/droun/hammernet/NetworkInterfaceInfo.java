@@ -7,6 +7,8 @@
  */
 package in.droun.hammernet;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -50,28 +52,33 @@ public class NetworkInterfaceInfo {
      * @return BigInteger of given MAC address.
      */
     public static BigInteger macAddressToBigInteger(final String macString) {
+
         // Validate
         final int maxMacStringLength = 17;
-        if (macString == null || macString.isEmpty() || macString.length() > maxMacStringLength) {
-            throw new IllegalArgumentException("Invalid maxMacStringLength. Either null, empty, "
-                    + "or too long.");
-        }
+        String cleanMacString = null;
+        if (isNotBlank(macString) && macString.length() <= maxMacStringLength) {
 
-        // Cleanup and revalidate
-        final String cleanMacString = macString.replaceAll("[:\\.\\s-]", "").toLowerCase();
-        if (!cleanMacString.matches("[0-9a-f]{12}")) {
-            throw new IllegalArgumentException("Invalid maxMacStringLength. Either invalid "
-                    + "character, or wrong size.");
+            // Cleanup and revalidate
+            cleanMacString = macString.replaceAll("[:\\.\\s-]", "").toLowerCase();
+            if (!cleanMacString.matches("[0-9a-f]{12}")) {
+                cleanMacString = null;
+            }
         }
 
         // Convert
-        final String[] mac = cleanMacString.split("(?<=\\G.{2})");
-        final int macByteSize = 6;
-        final byte[] macAddress = new byte[macByteSize];
-        for (int i = 0; i < mac.length; i++) {
-            macAddress[i] = Integer.decode("0x" + mac[i]).byteValue();
+        BigInteger result = null;
+        if (isNotBlank(cleanMacString)) {
+            final String[] mac = cleanMacString.split("(?<=\\G.{2})");
+            final int macByteSize = 6;
+            final byte[] macAddress = new byte[macByteSize];
+            for (int i = 0; i < mac.length; i++) {
+                macAddress[i] = Integer.decode("0x" + mac[i]).byteValue();
+            }
+
+            result = new BigInteger(macAddress);
         }
-        return new BigInteger(macAddress);
+
+        return result;
     }
 
     /**
@@ -132,7 +139,6 @@ public class NetworkInterfaceInfo {
 
         return result;
     }
-
 
     /**
      * Returns the numeric representation of this IP address (such as "127.0.0.1"). Can return

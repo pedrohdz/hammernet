@@ -7,6 +7,9 @@
  */
 package in.droun.hammernet;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -14,8 +17,6 @@ import java.math.BigInteger;
 import java.net.SocketException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * This class is mostly here to allow for dependency injection and to simplify unit testing. Since
@@ -77,7 +78,7 @@ public class AndroidNetInfo {
 
     /**
      * Finds the devices WiFi interface and returns its MAC address.
-     *<p>
+     * <p>
      * This method tries it's best to always return null if any problems occur.
      *
      * @return The WiFi device's MAC address, null if there is no WiFi interface, or if there are
@@ -93,12 +94,7 @@ public class AndroidNetInfo {
 
         BigInteger result;
         if (isNotBlank(wifiMacString)) {
-            try {
-                result = NetworkInterfaceInfo.macAddressToBigInteger(wifiMacString);
-            } catch (IllegalArgumentException ex) {
-                LOG.error("Unknown format MAC address format, '{}'", wifiMacString, ex);
-                result = null;
-            }
+            result = NetworkInterfaceInfo.macAddressToBigInteger(wifiMacString);
         } else {
             result = null;
         }
@@ -106,32 +102,23 @@ public class AndroidNetInfo {
         return result;
     }
 
-    public String getIp4Address() {
+    public String getIp4Address() throws SocketException {
         return getIp4Address(null);
     }
 
-    public String getIp4Address(final String defaultInterface) {
+    public String getIp4Address(final String defaultInterface) throws SocketException {
         String ipAddress = null;
-        try {
-            // Find Wifi IP address
-            String interfaceName = wifiInterfaceName();
+        // Find Wifi IP address
+        String interfaceName = wifiInterfaceName();
 
-            // Use defaultInterface if no wifi interface found
-            if (isBlank(interfaceName)) {
-                interfaceName = defaultInterface;
-            }
+        // Use defaultInterface if no wifi interface found
+        if (isBlank(interfaceName)) {
+            interfaceName = defaultInterface;
+        }
 
-            // Actually get the IP address
-            if (isNotBlank(interfaceName)) {
-                ipAddress = mInterfaceInfo.getIp4HostAddressByName(interfaceName);
-            }
-        } catch (SocketException ex) {
-            LOG.error("Failed to get WiFi interface name.", ex);
-            ipAddress = null;
-        } catch (IllegalArgumentException ex) {
-            // TODO: 
-            LOG.error("TODO...  Add something...", ex);
-            ipAddress = null;
+        // Actually get the IP address
+        if (isNotBlank(interfaceName)) {
+            ipAddress = mInterfaceInfo.getIp4HostAddressByName(interfaceName);
         }
 
         return ipAddress;
