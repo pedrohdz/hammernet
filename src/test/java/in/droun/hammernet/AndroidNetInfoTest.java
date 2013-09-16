@@ -27,7 +27,8 @@ import org.junit.Before;
  *
  * @author Pedro F. Hernandez (Digital Rounin)
  */
-@SuppressWarnings("PMD.AvoidUsingHardCodedIP") // This is test code and have to hardcode values
+@SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", // This is test code and have to hardcode values
+    "PMD.TooManyStaticImports" }) // Again, test code, I am going to use imports a lot.
 public class AndroidNetInfoTest {
 
     private transient NetworkInterfaceInfo mNetworkInterfaceInfo;
@@ -53,6 +54,18 @@ public class AndroidNetInfoTest {
 
         // AndroidNetInfo
         mAndroidNetInfo = new AndroidNetInfo(mAndroidContext, mNetworkInterfaceInfo);
+    }
+
+    //----
+    // getIp4Address()
+    //----
+    @Test
+    @SuppressWarnings("PMD.JUnitTestsShouldIncludeAssert") // verify() is an assert
+    public void getIp4Address_callsOther_true_test() throws SocketException {
+        // SUCCESS - Make sure that getIp4Address() getIp4Address(String)
+        final AndroidNetInfo androidNetInfo = spy(new AndroidNetInfo(mAndroidContext));
+        androidNetInfo.getIp4Address();
+        verify(androidNetInfo, times(1)).getIp4Address(anyString());
     }
 
     //----
