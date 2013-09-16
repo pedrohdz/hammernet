@@ -68,16 +68,10 @@ public class AndroidNetInfo {
      */
     public String wifiInterfaceName() throws SocketException {
 
-        // Fetch WiFi MAC address to search on
         final BigInteger wifiMac = wifiMacAddress();
-        final String result;
-        if (wifiMac != null) {
-            result = mInterfaceInfo.getNameByMacAddress(wifiMac);
-        } else {
-            result = null;
-        }
-
-        return result;
+        final String interfaceName = wifiMac != null
+                ? mInterfaceInfo.getNameByMacAddress(wifiMac) : null;
+        return isNotBlank(interfaceName) ? interfaceName : null;
     }
 
     /**

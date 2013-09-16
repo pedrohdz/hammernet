@@ -79,9 +79,20 @@ public class AndroidNetInfoTest {
         assertThat(ip4Address, is(equalTo(defaultIpAddress)));
     }
 
+    //----
+    // wifiMacAddress()
+    //----
+    @Test
+    public void wifiMacAddress_goodMac_returnValid_test() {
+        // SUCCESS - Context returns valid MAC address
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn("1C-7C-D7-09-A3-DE");
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(equalTo(new BigInteger("31322509255646"))));
+    }
+
     @Test
     public void wifiMacAddress_wifiManagerNull_returnNull_test() {
-        // Context returns null on Context.WIFI_SERVICE
+        // FAILURE - Context returns null on Context.WIFI_SERVICE
         when(mAndroidContext.getSystemService(Context.WIFI_SERVICE)).thenReturn(null);
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
@@ -89,7 +100,7 @@ public class AndroidNetInfoTest {
 
     @Test
     public void wifiMacAddress_wifiInfoNull_returnNull_test() {
-        // Context returns null on WifiInfo
+        // FAILURE - Context returns null on WifiInfo
         when(mAndroidWifiManager.getConnectionInfo()).thenReturn(null);
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
@@ -97,7 +108,7 @@ public class AndroidNetInfoTest {
 
     @Test
     public void wifiMacAddress_macAddressNull_returnNull_test() {
-        // Context returns null on null MAC address
+        // FAILURE - Context returns null on null MAC address
         when(mAndroidWifiInfo.getMacAddress()).thenReturn(null);
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
@@ -105,7 +116,7 @@ public class AndroidNetInfoTest {
 
     @Test
     public void wifiMacAddress_macEmpty_returnNull_test() {
-        // Context returns null on null MAC address
+        // FAILURE - Context returns null on null MAC address
         when(mAndroidWifiInfo.getMacAddress()).thenReturn("");
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
@@ -113,11 +124,45 @@ public class AndroidNetInfoTest {
 
     @Test
     public void wifiMacAddress_macBadString_returnNull_test() {
-        // Context returns null on null MAC address
+        // FAILURE - Context returns null on null MAC address
         LOG.error("Please ignore the following exception.  Genereted by testing.");
         when(mAndroidWifiInfo.getMacAddress()).thenReturn("BAD_MAC_ADDRESS_IGNORE_EXCEPTION");
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+    //----
+    // wifiInterfaceName()
+    //----
+    @Test
+    public void wifiInterfaceName_goodMac_returnValid_test() throws SocketException {
+        // SUCCESS - Context returns valid MAC address
+        final String expectedName = "wlan76";
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn("D8C2.2C61.EA55");
+        when(mNetworkInterfaceInfo.getNameByMacAddress(new BigInteger("-43146496841131")))
+                .thenReturn(expectedName);
+        final String returnedName = mAndroidNetInfo.wifiInterfaceName();
+        assertThat(returnedName, is(equalTo(expectedName)));
+    }
+
+    @Test
+    public void wifiInterfaceName_nullMac_returnNull_test() throws SocketException {
+        // FAILURE - Context returns valid MAC address
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn(null);
+        when(mNetworkInterfaceInfo.getNameByMacAddress(any(BigInteger.class)))
+                .thenReturn("something");
+        final String returnedName = mAndroidNetInfo.wifiInterfaceName();
+        assertThat(returnedName, is(nullValue()));
+    }
+
+    @Test
+    public void wifiInterfaceName_nullName_returnNull_test() throws SocketException {
+        // FAILURE - Context returns valid MAC address
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn("4391983D0F98");
+        when(mNetworkInterfaceInfo.getNameByMacAddress(any(BigInteger.class)))
+                .thenReturn(null);
+        final String returnedName = mAndroidNetInfo.wifiInterfaceName();
+        assertThat(returnedName, is(nullValue()));
     }
 
 
