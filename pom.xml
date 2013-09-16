@@ -10,7 +10,7 @@
         <groupId>in.droun</groupId>
         <artifactId>android-maven-parent</artifactId>
         <version>0.0-SNAPSHOT</version>
-        <relativePath>../android-maven-parent</relativePath>
+        <relativePath>./android-maven-parent</relativePath>
     </parent>
 
     <groupId>in.droun</groupId>
@@ -25,6 +25,11 @@
             <artifactId>android</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <scope>compile</scope>
@@ -32,6 +37,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-nop</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
