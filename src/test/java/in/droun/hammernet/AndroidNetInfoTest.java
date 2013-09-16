@@ -10,16 +10,19 @@ package in.droun.hammernet;
 import static org.junit.Assert.*;
 import static org.hamcrest.core.IsEqual.*;
 import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNull.*;
 import static org.mockito.Mockito.*;
 
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import java.math.BigInteger;
 import java.net.SocketException;
-import org.junit.After;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -27,6 +30,8 @@ import org.junit.Before;
  */
 @SuppressWarnings("PMD.AvoidUsingHardCodedIP") // This is test code and have to hardcode values
 public class AndroidNetInfoTest {
+
+    protected static final Logger LOG = LoggerFactory.getLogger(AndroidNetInfoTest.class);
 
     private transient NetworkInterfaceInfo mNetworkInterfaceInfo;
     private transient WifiInfo mAndroidWifiInfo;
@@ -53,15 +58,6 @@ public class AndroidNetInfoTest {
         mAndroidNetInfo = new AndroidNetInfo(mAndroidContext, mNetworkInterfaceInfo);
     }
 
-    @After
-    public void after() {
-        mNetworkInterfaceInfo = null;
-        mAndroidWifiInfo = null;
-        mAndroidWifiManager = null;
-        mAndroidContext = null;
-        mAndroidNetInfo = null;
-    }
-
     @Test
     public void getIp4Address_withWifiMacWifiNoIp_returnDefault_test() throws SocketException {
         final String defaultInterfaceName = "eth0";
@@ -82,4 +78,47 @@ public class AndroidNetInfoTest {
         // *** Validate ***
         assertThat(ip4Address, is(equalTo(defaultIpAddress)));
     }
+
+    @Test
+    public void wifiMacAddress_wifiManagerNull_returnNull_test() {
+        // Context returns null on Context.WIFI_SERVICE
+        when(mAndroidContext.getSystemService(Context.WIFI_SERVICE)).thenReturn(null);
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+    @Test
+    public void wifiMacAddress_wifiInfoNull_returnNull_test() {
+        // Context returns null on WifiInfo
+        when(mAndroidWifiManager.getConnectionInfo()).thenReturn(null);
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+    @Test
+    public void wifiMacAddress_macAddressNull_returnNull_test() {
+        // Context returns null on null MAC address
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn(null);
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+    @Test
+    public void wifiMacAddress_macEmpty_returnNull_test() {
+        // Context returns null on null MAC address
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn("");
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+    @Test
+    public void wifiMacAddress_macBadString_returnNull_test() {
+        // Context returns null on null MAC address
+        LOG.error("Please ignore the following exception.  Genereted by testing.");
+        when(mAndroidWifiInfo.getMacAddress()).thenReturn("BAD_MAC_ADDRESS_IGNORE_EXCEPTION");
+        final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
+        assertThat(wifiMacAddress, is(nullValue()));
+    }
+
+
 }

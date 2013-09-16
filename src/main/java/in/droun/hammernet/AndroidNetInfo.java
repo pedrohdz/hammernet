@@ -14,6 +14,7 @@ import java.math.BigInteger;
 import java.net.SocketException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * This class is mostly here to allow for dependency injection and to simplify unit testing. Since
@@ -25,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AndroidNetInfo {
 
-    protected static final Logger LOG = LoggerFactory.getLogger("qsAndrWifiInfo");
+    protected static final Logger LOG = LoggerFactory.getLogger("qsAndroidNetInfo");
 
     /**
      * Android context to use for networking calls.
@@ -48,7 +49,6 @@ public class AndroidNetInfo {
     public AndroidNetInfo(final Context context) {
         this(context, new NetworkInterfaceInfo());
     }
-
 
     /**
      * Returns the Wi-Fi interface name on an Android device.
@@ -82,23 +82,26 @@ public class AndroidNetInfo {
 
     /**
      * Finds the devices WiFi interface and returns its MAC address.
+     *<p>
+     * This method tries it's best to always return null if any problems occur.
      *
-     * @return The WiFi device's MAC address, null if there is no no WiFi interface.
+     * @return The WiFi device's MAC address, null if there is no WiFi interface, or if there are
+     *         any errors encountered while trying to obtain the MAC address.
      */
     public BigInteger wifiMacAddress() {
 
         // Get WiFi interface's MAC address as a BigInteger.
         final WifiManager wifiManager
                 = (WifiManager) mAndroidContext.getSystemService(Context.WIFI_SERVICE);
-        final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        final String wifiMacString = wifiInfo.getMacAddress();
+        final WifiInfo wifiInfo = wifiManager != null ? wifiManager.getConnectionInfo() : null;
+        final String wifiMacString = wifiInfo != null ? wifiInfo.getMacAddress() : null;
 
         BigInteger result;
-        if (wifiMacString != null) {
+        if (isNotBlank(wifiMacString)) {
             try {
                 result = NetworkInterfaceInfo.macAddressToBigInteger(wifiMacString);
             } catch (IllegalArgumentException ex) {
-                // TODO: log!!!
+                LOG.error("Unknown format MAC address format, '{}'", wifiMacString, ex);
                 result = null;
             }
         } else {
