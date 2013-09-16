@@ -15,6 +15,7 @@ import java.net.SocketException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * This class is mostly here to allow for dependency injection and to simplify unit testing. Since
@@ -116,12 +117,12 @@ public class AndroidNetInfo {
             String interfaceName = wifiInterfaceName();
 
             // Use defaultInterface if no wifi interface found
-            if (interfaceName == null || interfaceName.isEmpty()) {
+            if (isBlank(interfaceName)) {
                 interfaceName = defaultInterface;
             }
 
             // Actually get the IP address
-            if (interfaceName != null && !interfaceName.isEmpty()) {
+            if (isNotBlank(interfaceName)) {
                 ipAddress = mInterfaceInfo.getIp4HostAddressByName(interfaceName);
             }
         } catch (SocketException ex) {
@@ -133,7 +134,6 @@ public class AndroidNetInfo {
             ipAddress = null;
         }
 
-        // Only ever return an real value or null
-        return ipAddress != null && !ipAddress.isEmpty() ? ipAddress : null;
+        return ipAddress;
     }
 }
