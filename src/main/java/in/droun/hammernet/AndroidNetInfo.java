@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Pedro F. Hernandez (Digital Rounin)
  */
-public class AndroidWifiInfo {
+public class AndroidNetInfo {
 
     protected static final Logger LOG = LoggerFactory.getLogger("qsAndrWifiInfo");
 
@@ -40,12 +40,12 @@ public class AndroidWifiInfo {
      * @param context
      * @param interfaceInfo
      */
-    public AndroidWifiInfo(final Context context, final NetworkInterfaceInfo interfaceInfo) {
+    public AndroidNetInfo(final Context context, final NetworkInterfaceInfo interfaceInfo) {
         mAndroidContext = context;
         mInterfaceInfo = interfaceInfo;
     }
 
-    public AndroidWifiInfo(final Context context) {
+    public AndroidNetInfo(final Context context) {
         this(context, new NetworkInterfaceInfo());
     }
 
@@ -106,6 +106,10 @@ public class AndroidWifiInfo {
         }
 
         return result;
+    }
+
+    public String getIp4Address() {
+        return getIp4Address(null);
     }
 
     public String getIp4Address(final String defaultInterface) {
