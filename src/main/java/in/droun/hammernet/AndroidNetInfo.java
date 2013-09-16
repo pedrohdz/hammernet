@@ -15,8 +15,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import java.math.BigInteger;
 import java.net.SocketException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is mostly here to allow for dependency injection and to simplify unit testing. Since
@@ -27,8 +25,6 @@ import org.slf4j.LoggerFactory;
  * @author Pedro F. Hernandez (Digital Rounin)
  */
 public class AndroidNetInfo {
-
-    protected static final Logger LOG = LoggerFactory.getLogger("qsAndroidNetInfo");
 
     /**
      * Android context to use for networking calls.

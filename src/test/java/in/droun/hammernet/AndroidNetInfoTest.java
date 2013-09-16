@@ -22,8 +22,6 @@ import java.net.SocketException;
 
 import org.junit.Test;
 import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,8 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings("PMD.AvoidUsingHardCodedIP") // This is test code and have to hardcode values
 public class AndroidNetInfoTest {
-
-    protected static final Logger LOG = LoggerFactory.getLogger(AndroidNetInfoTest.class);
 
     private transient NetworkInterfaceInfo mNetworkInterfaceInfo;
     private transient WifiInfo mAndroidWifiInfo;
@@ -161,7 +157,6 @@ public class AndroidNetInfoTest {
     @Test
     public void wifiMacAddress_macBadString_returnNull_test() {
         // FAILURE - Context returns null on bad MAC address
-        LOG.error("Please ignore the following exception.  Genereted by testing.");
         when(mAndroidWifiInfo.getMacAddress()).thenReturn("BAD_MAC_ADDRESS_IGNORE_EXCEPTION");
         final BigInteger wifiMacAddress = mAndroidNetInfo.wifiMacAddress();
         assertThat(wifiMacAddress, is(nullValue()));
