@@ -49,6 +49,54 @@ public class AndroidNetInfo {
     }
 
     /**
+     *
+     * Wrapper static method that allows for getting the IP address in a single call:
+     *
+     * <pre>
+     *{@code
+     *    final String ipAddress = AndroidNetInfo.wifiIp4Address(this);
+     *}
+     * </pre>
+     *
+     * @param context          {@link android.content.Context}
+     *
+     * @return IP address, or null if unable to obtain
+     *
+     * @throws SocketException
+     */
+    public static String wifiIp4Address(final Context context) throws SocketException {
+        return wifiOrDefaultIp4Address(context, null);
+    }
+
+    /**
+     *
+     * Wrapper static method that allows for getting the IP address in a single call:
+     *
+     * <pre>
+     *{@code
+     *    final String defaultInterfaceName = BuildConstants.DEV_BUILD ? "eth0" : null;
+     *    final String ipAddress
+     *            = AndroidNetInfo.wifiOrDefaultIp4Address(this, defaultInterfaceName);
+     *}
+     * </pre>
+     *
+     * The <i>defaultInterface</i> for testing on emulators, where there is no wifi interface.
+     *
+     * @param context          {@link android.content.Context}
+     * @param defaultInterface if unable to find wifi interface, it will return the IP address of
+     *                         defaultInterfaceif instead
+     *
+     * @return IP address, or null if unable to obtain
+     *
+     * @throws SocketException
+     */
+    public static String wifiOrDefaultIp4Address(final Context context,
+            final String defaultInterface) throws SocketException {
+        final AndroidNetInfo androidNetInfo = new AndroidNetInfo(context);
+        return androidNetInfo.getIp4Address(defaultInterface);
+    }
+
+    /**
      * Returns the Wi-Fi interface name on an Android device.
      *
      * @return The interface name of the Wi-Fi adapter. If there is no Wi-Fi adapter, null is
