@@ -40,7 +40,7 @@ public class NetworkInterfaceInfoTest {
     static {
         String testAdaptorName = null;
         String testAdaptorIp = null;
-        BigInteger testAdaptorMac = null;
+        byte[] testAdaptorMac = null;
         try {
             final InterfaceQuery interfaceQuery = new InterfaceQuery();
             final Enumeration<NetworkInterface> networkInterfaces
@@ -55,7 +55,7 @@ public class NetworkInterfaceInfoTest {
                     if (isNotBlank(ipAddress)) {
                         testAdaptorName = name;
                         testAdaptorIp = ipAddress;
-                        testAdaptorMac = new BigInteger(adaptor.getHardwareAddress());
+                        testAdaptorMac = adaptor.getHardwareAddress();
                         break;
                     }
                 }
@@ -68,7 +68,7 @@ public class NetworkInterfaceInfoTest {
 
         TEST_ADAPTOR_NAME = testAdaptorName;
         TEST_ADAPTOR_IP = testAdaptorIp;
-        TEST_ADAPTOR_MAC = testAdaptorMac;
+        TEST_ADAPTOR_MAC = new BigInteger(testAdaptorMac);
     }
 
     @Before
