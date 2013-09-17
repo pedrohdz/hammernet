@@ -28,6 +28,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+/**
+ * This test is a bit of a hack considering that the data being used (sTestAdaptorName and
+ * sTestAdaptorIp) were gotten from the method being tested. At least we are some what checking
+ * consistency? Maybe it can be made to actually work in the future?
+ */
 @SuppressWarnings("PMD.TooManyStaticImports")
 public class NetworkInterfaceInfoTest {
 
@@ -95,13 +100,6 @@ public class NetworkInterfaceInfoTest {
     //----
     // getIp4HostAddressByName(String)
     //----
-    /**
-     * This test is a bit of a hack considering that the data being used (sTestAdaptorName and
-     * sTestAdaptorIp) were gotten from the method being tested. At least we are some what checking
-     * consistency? Maybe it can be made to actually work in the future?
-     *
-     * @throws SocketException
-     */
     @Test
     public void getIp4HostAddressByName_validName_validIp_test() throws SocketException {
         // Assuming we have sTestAdaptorName and sTestAdaptorIp, does it work?
@@ -111,13 +109,6 @@ public class NetworkInterfaceInfoTest {
         assertThat(ipAddress, is(equalTo(sTestAdaptorIp)));
     }
 
-    /**
-     * This is another hack. Checking to make sure that InterfaceQuery.getByName() is never called
-     * as a way of making sure that execution stops, more or less. Legacy code like NetworkInterface
-     * makes life very painful.
-     *
-     * @throws SocketException
-     */
     @Test
     public void getIp4HostAddressByName_nullName_nullIp_test() throws SocketException {
         // Null inteface name returns a null IP address
@@ -126,13 +117,6 @@ public class NetworkInterfaceInfoTest {
         assertThat(ipAddress, is(nullValue()));
     }
 
-    /**
-     * This is another hack. Checking to make sure that InterfaceQuery.getByName() is never called
-     * as a way of making sure that execution stops, more or less. Legacy code like NetworkInterface
-     * makes life very painful.
-     *
-     * @throws SocketException
-     */
     @Test
     public void getIp4HostAddressByName_emptyName_nullIp_test() throws SocketException {
         // Empty string for an inteface name returns a null IP address
@@ -141,13 +125,6 @@ public class NetworkInterfaceInfoTest {
         assertThat(ipAddress, is(nullValue()));
     }
 
-    /**
-     * This is another hack. Checking to make sure that InterfaceQuery.getByName() is never called
-     * as a way of making sure that execution stops, more or less. Legacy code like NetworkInterface
-     * makes life very painful.
-     *
-     * @throws SocketException
-     */
     @Test
     public void getIp4HostAddressByName_longName_nullIp_test() throws SocketException {
         // Too long of a string for an inteface name returns a null IP address
