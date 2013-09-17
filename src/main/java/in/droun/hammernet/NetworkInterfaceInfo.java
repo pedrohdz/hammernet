@@ -102,27 +102,25 @@ public class NetworkInterfaceInfo {
      */
     public String getNameByMacAddress(final BigInteger macAddress) throws SocketException {
 
-        if (macAddress == null) {
-            throw new IllegalArgumentException("macAddress is null");
-        }
-
         // Fetch list of interfaces on the device and iterate
-        String result = null;
         final Enumeration<NetworkInterface> interfaces = mInterfaceQuery.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
-            final NetworkInterface current = interfaces.nextElement();
+        String result = null;
+        if (macAddress != null && interfaces != null) {
+            while (interfaces.hasMoreElements()) {
+                final NetworkInterface current = interfaces.nextElement();
 
-            final byte[] hardwareAddress = current.getHardwareAddress();
-            if (hardwareAddress == null) {
-                continue;
-            }
+                final byte[] hardwareAddress = current.getHardwareAddress();
+                if (hardwareAddress == null) {
+                    continue;
+                }
 
-            // Next NOPMD is for AvoidInstantiatingObjectsInLoops, no choice in the matter
-            final BigInteger currentMac = new BigInteger(hardwareAddress); // NOPMD
-            if (currentMac.equals(macAddress)) {
-                // If the current interface's and WiFi MAC match, we have a winner
-                result = current.getName();
-                break;
+                // Next NOPMD is for AvoidInstantiatingObjectsInLoops, no choice in the matter
+                final BigInteger currentMac = new BigInteger(hardwareAddress); // NOPMD
+                if (currentMac.equals(macAddress)) {
+                    // If the current interface's and WiFi MAC match, we have a winner
+                    result = current.getName();
+                    break;
+                }
             }
         }
 

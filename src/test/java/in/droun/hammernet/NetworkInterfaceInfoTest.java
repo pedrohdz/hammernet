@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import static in.droun.hammernet.NetworkInterfaceInfo.InterfaceQuery;
+import java.math.BigInteger;
 
 import java.net.Inet4Address;
 import static org.hamcrest.core.Is.*;
@@ -31,6 +32,7 @@ public class NetworkInterfaceInfoTest {
 
     private static final String TEST_ADAPTOR_NAME;
     private static final String TEST_ADAPTOR_IP;
+    private static final BigInteger TEST_ADAPTOR_MAC;
 
     private transient NetworkInterfaceInfo mNetworkInterfaceInfo;
     private transient InterfaceQuery mInterfaceQuery;
@@ -38,9 +40,11 @@ public class NetworkInterfaceInfoTest {
     static {
         String testAdaptorName = null;
         String testAdaptorIp = null;
+        BigInteger testAdaptorMac = null;
         try {
+            final InterfaceQuery interfaceQuery = new InterfaceQuery();
             final Enumeration<NetworkInterface> networkInterfaces
-                    = NetworkInterface.getNetworkInterfaces();
+                    = interfaceQuery.getNetworkInterfaces();
             final NetworkInterfaceInfo interfaceInfo = new NetworkInterfaceInfo();
 
             while (networkInterfaces.hasMoreElements()) {
@@ -51,6 +55,7 @@ public class NetworkInterfaceInfoTest {
                     if (isNotBlank(ipAddress)) {
                         testAdaptorName = name;
                         testAdaptorIp = ipAddress;
+                        testAdaptorMac = new BigInteger(adaptor.getHardwareAddress());
                         break;
                     }
                 }
@@ -63,6 +68,7 @@ public class NetworkInterfaceInfoTest {
 
         TEST_ADAPTOR_NAME = testAdaptorName;
         TEST_ADAPTOR_IP = testAdaptorIp;
+        TEST_ADAPTOR_MAC = testAdaptorMac;
     }
 
     @Before
@@ -83,6 +89,9 @@ public class NetworkInterfaceInfoTest {
                 .getHostAddressByName(TEST_ADAPTOR_NAME, Inet4Address.class);
     }
 
+    //----
+    // getIp4HostAddressByName(String)
+    //----
     /**
      * This test is a bit of a hack considering that the data being used (TEST_ADAPTOR_NAME and
      * TEST_ADAPTOR_IP) were gotten from the method being tested. At least we are some what checking
@@ -155,4 +164,53 @@ public class NetworkInterfaceInfoTest {
         verify(mInterfaceQuery, times(1)).getByName(anyString());
         assertThat(ipAddress, is(nullValue()));
     }
+
+    //----
+    // getHostAddressByName(String, Class)
+    //----
+    @Test
+    public void getHostAddressByName_goodName_nullIp_test() throws SocketException {
+        // Good adaptor name, but null InetAddress.class
+        final String ipAddress = mNetworkInterfaceInfo
+                .getHostAddressByName(TEST_ADAPTOR_NAME, null);
+        verify(mInterfaceQuery, times(1)).getByName(anyString());
+        assertThat(ipAddress, is(nullValue()));
+    }
+
+    //----
+    // getNameByMacAddress(BigInteger)
+    //----
+    @Test
+    public void getNameByMacAddress_goodMac_goodResult_test() throws SocketException {
+        // Assuming we have a MAC to test with, we get a good name
+        assumeThat(TEST_ADAPTOR_MAC, is(notNullValue()));
+        assumeThat(TEST_ADAPTOR_NAME, is(notNullValue()));
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(TEST_ADAPTOR_MAC);
+        assertThat(name, is(equalTo(TEST_ADAPTOR_NAME)));
+    }
+
+    @Test
+    public void getNameByMacAddress_nullMac_nullResult_test() throws SocketException {
+        // Null MAC results is null return
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(null);
+        assertThat(name, is(nullValue()));
+    }
+
+    @Test
+    public void getNameByMacAddress_unknownMac_nullResult_test() throws SocketException {
+        // NetworkInterfaces.getNetworkInterfaces() returns null results is null return
+        final BigInteger unknownMac
+                = NetworkInterfaceInfo.macAddressToBigInteger("18-78-13-8b-ec-9a");
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(unknownMac);
+        assertThat(name, is(nullValue()));
+    }
+
+    @Test
+    public void getNameByMacAddress_nullInferfaceList_nullResult_test() throws SocketException {
+        // NetworkInterfaces.getNetworkInterfaces() returns null results is null return
+        when(mInterfaceQuery.getNetworkInterfaces()).thenReturn(null);
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(TEST_ADAPTOR_MAC);
+        assertThat(name, is(nullValue()));
+    }
+
 }
