@@ -26,18 +26,21 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.BeforeClass;
 
-@SuppressWarnings({ "PMD.SystemPrintln", "PMD.TooManyStaticImports" })
+@SuppressWarnings("PMD.TooManyStaticImports")
 public class NetworkInterfaceInfoTest {
 
-    private static final String TEST_ADAPTOR_NAME;
-    private static final String TEST_ADAPTOR_IP;
-    private static final BigInteger TEST_ADAPTOR_MAC;
+    private static String sTestAdaptorName;
+    private static String sTestAdaptorIp;
+    private static BigInteger sTestAdaptorMac;
 
     private transient NetworkInterfaceInfo mNetworkInterfaceInfo;
     private transient InterfaceQuery mInterfaceQuery;
 
-    static {
+    @BeforeClass
+    @SuppressWarnings("PMD.SystemPrintln")
+    public static void beforeClass() {
         String testAdaptorName = null;
         String testAdaptorIp = null;
         byte[] testAdaptorMac = null;
@@ -66,9 +69,9 @@ public class NetworkInterfaceInfoTest {
             testAdaptorIp = null;
         }
 
-        TEST_ADAPTOR_NAME = testAdaptorName;
-        TEST_ADAPTOR_IP = testAdaptorIp;
-        TEST_ADAPTOR_MAC = new BigInteger(testAdaptorMac);
+        sTestAdaptorName = testAdaptorName;
+        sTestAdaptorIp = testAdaptorIp;
+        sTestAdaptorMac = new BigInteger(testAdaptorMac);
     }
 
     @Before
@@ -83,29 +86,29 @@ public class NetworkInterfaceInfoTest {
     public void getIp4HostAddressByName_callingGetHostAddressByName_true_test()
             throws SocketException {
         // Make sure that getIp4HostAddressByName() is calling getHostAddressByName()
-        // This test should work even if TEST_ADAPTOR_NAME is null.
-        mNetworkInterfaceInfo.getIp4HostAddressByName(TEST_ADAPTOR_NAME);
+        // This test should work even if sTestAdaptorName is null.
+        mNetworkInterfaceInfo.getIp4HostAddressByName(sTestAdaptorName);
         verify(mNetworkInterfaceInfo, times(1))
-                .getHostAddressByName(TEST_ADAPTOR_NAME, Inet4Address.class);
+                .getHostAddressByName(sTestAdaptorName, Inet4Address.class);
     }
 
     //----
     // getIp4HostAddressByName(String)
     //----
     /**
-     * This test is a bit of a hack considering that the data being used (TEST_ADAPTOR_NAME and
-     * TEST_ADAPTOR_IP) were gotten from the method being tested. At least we are some what checking
+     * This test is a bit of a hack considering that the data being used (sTestAdaptorName and
+     * sTestAdaptorIp) were gotten from the method being tested. At least we are some what checking
      * consistency? Maybe it can be made to actually work in the future?
      *
      * @throws SocketException
      */
     @Test
     public void getIp4HostAddressByName_validName_validIp_test() throws SocketException {
-        // Assuming we have TEST_ADAPTOR_NAME and TEST_ADAPTOR_IP, does it work?
-        assumeThat(TEST_ADAPTOR_NAME, is(notNullValue()));
-        assumeThat(TEST_ADAPTOR_IP, is(notNullValue()));
-        final String ipAddress = mNetworkInterfaceInfo.getIp4HostAddressByName(TEST_ADAPTOR_NAME);
-        assertThat(ipAddress, is(equalTo(TEST_ADAPTOR_IP)));
+        // Assuming we have sTestAdaptorName and sTestAdaptorIp, does it work?
+        assumeThat(sTestAdaptorName, is(notNullValue()));
+        assumeThat(sTestAdaptorIp, is(notNullValue()));
+        final String ipAddress = mNetworkInterfaceInfo.getIp4HostAddressByName(sTestAdaptorName);
+        assertThat(ipAddress, is(equalTo(sTestAdaptorIp)));
     }
 
     /**
@@ -172,7 +175,7 @@ public class NetworkInterfaceInfoTest {
     public void getHostAddressByName_goodName_nullIp_test() throws SocketException {
         // Good adaptor name, but null InetAddress.class
         final String ipAddress = mNetworkInterfaceInfo
-                .getHostAddressByName(TEST_ADAPTOR_NAME, null);
+                .getHostAddressByName(sTestAdaptorName, null);
         verify(mInterfaceQuery, times(1)).getByName(anyString());
         assertThat(ipAddress, is(nullValue()));
     }
@@ -183,10 +186,10 @@ public class NetworkInterfaceInfoTest {
     @Test
     public void getNameByMacAddress_goodMac_goodResult_test() throws SocketException {
         // Assuming we have a MAC to test with, we get a good name
-        assumeThat(TEST_ADAPTOR_MAC, is(notNullValue()));
-        assumeThat(TEST_ADAPTOR_NAME, is(notNullValue()));
-        final String name = mNetworkInterfaceInfo.getNameByMacAddress(TEST_ADAPTOR_MAC);
-        assertThat(name, is(equalTo(TEST_ADAPTOR_NAME)));
+        assumeThat(sTestAdaptorMac, is(notNullValue()));
+        assumeThat(sTestAdaptorName, is(notNullValue()));
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(sTestAdaptorMac);
+        assertThat(name, is(equalTo(sTestAdaptorName)));
     }
 
     @Test
@@ -209,7 +212,7 @@ public class NetworkInterfaceInfoTest {
     public void getNameByMacAddress_nullInferfaceList_nullResult_test() throws SocketException {
         // NetworkInterfaces.getNetworkInterfaces() returns null results is null return
         when(mInterfaceQuery.getNetworkInterfaces()).thenReturn(null);
-        final String name = mNetworkInterfaceInfo.getNameByMacAddress(TEST_ADAPTOR_MAC);
+        final String name = mNetworkInterfaceInfo.getNameByMacAddress(sTestAdaptorMac);
         assertThat(name, is(nullValue()));
     }
 
