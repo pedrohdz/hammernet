@@ -10,15 +10,18 @@ package in.droun.hammernet;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-public final class NetworkInterfaceInfoTestData {
+public final class NetworkInterfaceInfoData {
 
-    private NetworkInterfaceInfoTestData() {
+    private NetworkInterfaceInfoData() {
     }
 
-    public static Iterable<Object[]> macAddressToByteArrayValidParameters() {
-
+    // CHECKSTYLE.OFF: MethodLengthCheck - Chock full of test data
+    public static Iterable<Object[]> macAddressToByteArrayData() {
         final BigInteger sameMac = new BigInteger("-9964451978704");
         final Object[][] values = {
+            //----
+            // Good values
+            //----
             // Known good
             { "56:67:78:89:45:34", new BigInteger("95002403882292") },
             // Variations of f6:ef:f8:61:22:30 must be all equal to -9964451978704
@@ -40,39 +43,35 @@ public final class NetworkInterfaceInfoTestData {
             { "439C.0AB2.0D70", new BigInteger("74337473400176") },
             { "3bba.312a.ea81", new BigInteger("65670874851969") },
             { "FAD080347197", new BigInteger("-5701565648489") },
-            { "84b95172e33b", new BigInteger("-135543506410693") }
-        };
-
-        return Arrays.asList(values);
-    }
-
-    public static Iterable<Object[]> macAddressToByteArrayInvalidParameters() {
-
-        final Object[][] values = {
+            { "84b95172e33b", new BigInteger("-135543506410693") },
+            //----
+            // Bad values
+            //----
             // null
-            { null },
+            { null, null },
             // empty
-            { "" },
+            { "", null },
             // too long with delimitter
-            { "56:a7:78:89:4f:34:" },
+            { "56:a7:78:89:4f:34:", null },
             // one too short after strip
-            { "56677889453" },
+            { "56677889453", null },
             // too short
-            { "1111111111111111" },
+            { "1111111111111111", null },
             // way too short
-            { "2" },
+            { "2", null },
             // too long numbers
-            { "999999999999999999" },
+            { "999999999999999999", null },
             // right size, extra delimitter (too short)
-            { "56:a7:78::9:4f:34" }, //NOPMD
+            { "56:a7:78::9:4f:34", null }, //NOPMD
             // right size all spaces
-            { "                 " },
+            { "                 ", null },
             // invalid char ($)
-            { "56:a7$78:89:4f:34" },
+            { "56:a7$78:89:4f:34", null },
             // invalid char (g)
-            { "56:a7:78:g9:4f:34" }
+            { "56:a7:78:g9:4f:34", null }
         };
 
         return Arrays.asList(values);
     }
+    // CHECKSTYLE.ON: MethodLengthCheck
 }

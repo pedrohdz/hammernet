@@ -27,6 +27,9 @@ public class NetworkInterfaceInfo {
      */
     private final transient InterfaceQuery mInterfaceQuery;
 
+
+    public static final int MAX_INTERFACE_NAME_LENGTH = 128;
+
     /**
      * Simple NetworkInterfaceInfo constructor.
      */
@@ -82,20 +85,6 @@ public class NetworkInterfaceInfo {
     }
 
     /**
-     * Returns the numeric representation of this IPv4 address (such as
-     * "2001:0db8:85a3:0000:0000:8a2e:0370:7334").
-     *
-     * @param interfaceName name of interface.
-     *
-     * @return Interface's IP address
-     *
-     * @throws SocketException if a network error occurs.
-     */
-    public String getIp4HostAddressByName(final String interfaceName) throws SocketException {
-        return getHostAddressByName(interfaceName, Inet4Address.class);
-    }
-
-    /**
      * Returns the Wi-Fi interface name on an Android device.
      *
      * @return The interface name of the Wi-Fi adapter. If there is no Wi-Fi adapter, null is
@@ -141,6 +130,20 @@ public class NetworkInterfaceInfo {
     }
 
     /**
+     * Returns the numeric representation of this IPv4 address (such as
+     * "2001:0db8:85a3:0000:0000:8a2e:0370:7334").
+     *
+     * @param interfaceName name of interface.
+     *
+     * @return Interface's IP address
+     *
+     * @throws SocketException if a network error occurs.
+     */
+    public String getIp4HostAddressByName(final String interfaceName) throws SocketException {
+        return getHostAddressByName(interfaceName, Inet4Address.class);
+    }
+
+    /**
      * Returns the numeric representation of this IP address (such as "127.0.0.1"). Can return
      * either IPv4 or IPv6, depending on value of clazz.
      *
@@ -155,21 +158,13 @@ public class NetworkInterfaceInfo {
     protected String getHostAddressByName(final String interfaceName, final Class clazz)
             throws SocketException {
 
-        // Validate
-        final int maxInterfaceNameSize = 128;
-        if (interfaceName == null || interfaceName.isEmpty()
-                || maxInterfaceNameSize > maxInterfaceNameSize) {
-            throw new IllegalArgumentException("'interfaceName' is either empty or null.");
-        }
-
-        if (clazz == null) {
-            throw new IllegalArgumentException("'clazz' is null.");
-        }
+        final NetworkInterface adaptor
+                = isNotBlank(interfaceName) && interfaceName.length() <= MAX_INTERFACE_NAME_LENGTH
+                ? mInterfaceQuery.getByName(interfaceName) : null;
 
         // Query for information requested
-        final NetworkInterface adaptor = mInterfaceQuery.getByName(interfaceName);
         String result = null;
-        if (adaptor != null) {
+        if (adaptor != null && clazz != null) {
             final Enumeration<InetAddress> addresses = adaptor.getInetAddresses();
             while (addresses.hasMoreElements()) {
                 final InetAddress currentAddress = addresses.nextElement();
