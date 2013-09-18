@@ -21,6 +21,7 @@ emulator.
 
     git clone https://github.com/digitalrounin/hammernet.git
     cd hammernet
+    git submodule update --init
     mvn clean install
 
 If you get *PMD*, *Checkstyle*, *Findbugs*, or other related errors run the following instead:
