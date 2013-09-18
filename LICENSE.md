@@ -1,4 +1,4 @@
-Copyright (c) 2013, Pedro F. Hernandez (Digital Rounin)
+Copyright (c) 2013, Pedro F. Hernandez <<digitalrounin@gmail.com>>
 
 All rights reserved.
 
