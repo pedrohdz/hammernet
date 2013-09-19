@@ -9,7 +9,7 @@
     <parent>
         <groupId>in.droun</groupId>
         <artifactId>android-maven-parent</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
         <relativePath>./android-maven-parent</relativePath>
     </parent>
 
@@ -18,6 +18,11 @@
     <artifactId>hammernet</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+
+    <properties>
+        <!-- Plugins General Configuration -->
+        <plugin.checkstyle.headerLocation>../config/header-java.txt</plugin.checkstyle.headerLocation>
+    </properties>
 
     <dependencies>
         <dependency>
