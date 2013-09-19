@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Pedro F. Hernandez (Digital Rounin)
+ * Copyright (c) 2013, Pedro F. Hernandez <digitalrounin@gmail.com>
  *
  * All rights reserved.
  *
@@ -25,7 +25,7 @@ import org.junit.Before;
 
 /**
  *
- * @author Pedro F. Hernandez (Digital Rounin)
+ * @author Pedro F. Hernandez <digitalrounin@gmail.com>
  */
 @SuppressWarnings({ "PMD.AvoidUsingHardCodedIP", // This is test code and have to hardcode values
     "PMD.TooManyStaticImports" }) // Again, test code, I am going to use imports a lot.
