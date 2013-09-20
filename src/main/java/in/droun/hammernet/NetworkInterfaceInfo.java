@@ -27,7 +27,6 @@ public class NetworkInterfaceInfo {
      */
     private final transient InterfaceQuery mInterfaceQuery;
 
-
     public static final int MAX_INTERFACE_NAME_LENGTH = 128;
 
     /**
@@ -71,11 +70,14 @@ public class NetworkInterfaceInfo {
         // Convert
         BigInteger result = null;
         if (isNotBlank(cleanMacString)) {
-            final String[] mac = cleanMacString.split("(?<=\\G.{2})");
+            final char[] macNibbles = cleanMacString.toCharArray();
+
             final int macByteSize = 6;
             final byte[] macAddress = new byte[macByteSize];
-            for (int i = 0; i < mac.length; i++) {
-                macAddress[i] = Integer.decode("0x" + mac[i]).byteValue();
+            for (int i = 0; i < macByteSize; i++) {
+                final int pos = i * 2;
+                macAddress[i] = Integer.decode("0x" + macNibbles[pos] + macNibbles[pos + 1])
+                        .byteValue();
             }
 
             result = new BigInteger(macAddress);
