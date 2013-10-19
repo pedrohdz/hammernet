@@ -1,3 +1,3 @@
 [submodule "android-maven-parent"]
 	path = android-maven-parent
-	url = git@github.com:digitalrounin/android-maven-parent.git
+	url = https://github.com/digitalrounin/android-maven-parent.git
