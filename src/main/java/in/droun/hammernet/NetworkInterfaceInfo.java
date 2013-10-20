@@ -115,9 +115,8 @@ public class NetworkInterfaceInfo {
                 try {
                     hardwareAddress = current.getHardwareAddress();
                 } catch (SocketException socketException) {
-                    final String loop = current.isLoopback() ? "TRUE" : "FALSE";
                     System.err.println("Failed on: " + current.getName()
-                            + " => " + loop);
+                            + " => " + current.isVirtual());
                     throw socketException;
                 }
 
