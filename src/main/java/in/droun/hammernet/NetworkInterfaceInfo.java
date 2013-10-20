@@ -89,6 +89,8 @@ public class NetworkInterfaceInfo {
     /**
      * Returns the Wi-Fi interface name on an Android device.
      *
+     * @param macAddress MAC address of interface name to find.
+     *
      * @return The interface name of the Wi-Fi adapter. If there is no Wi-Fi adapter, null is
      *         returned. This is typical the case for Android Virtual Machines.
      *
@@ -100,8 +102,6 @@ public class NetworkInterfaceInfo {
      * Stackoverflow: wifi network interface name</a> - for more information.
      * <!-- CHECKSTYLE.ON: LineLength -->
      */
-    // TODO: Remove SuppressWarnings
-    @SuppressWarnings("PMD.SystemPrintln")
     public String getNameByMacAddress(final BigInteger macAddress) throws SocketException {
 
         // Fetch list of interfaces on the device and iterate
@@ -111,16 +111,13 @@ public class NetworkInterfaceInfo {
             while (interfaces.hasMoreElements()) {
                 final NetworkInterface current = interfaces.nextElement();
 
-                byte[] hardwareAddress = null;
+                final byte[] hardwareAddress;
                 try {
                     hardwareAddress = current.getHardwareAddress();
                 } catch (SocketException socketException) {
-                    System.err.println("Failed on: " + current.getName()
-                            + " isVirtual:" + current.isVirtual()
-                            + " isUp:" + current.isUp()
-                            + " isPointToPoint:" + current.isPointToPoint()
-                            );
-                    throw socketException;
+                    // getHardwareAddress() throws "java.net.SocketException: No such device" on
+                    // the Jenkins, just skip these interfaces.
+                    continue;
                 }
 
                 if (hardwareAddress == null) {
