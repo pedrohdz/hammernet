@@ -122,7 +122,7 @@ public class NetworkInterfaceInfo {
                             + "isLoopback:" + current.isLoopback()
                             + "isVirtual:" + current.isVirtual()
                             + "isPointToPoint:" + current.isPointToPoint();
-                    throw new IllegalStateException(error, socketException);
+                    throw new IllegalStateException(error);
                 }
 
                 if (hardwareAddress == null) {
