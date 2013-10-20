@@ -112,14 +112,14 @@ public class NetworkInterfaceInfo {
                 final NetworkInterface current = interfaces.nextElement();
 
                 byte[] hardwareAddress = null;
-                final String error = "Failed on:" + current.getName()
-                        + " => " + current.toString()
-                        + " isLoopback:" + current.isLoopback()
-                        + " isVirtual:" + current.isVirtual()
-                        + " isPointToPoint:" + current.isPointToPoint();
-                System.out.println(error);
-                System.out.flush();
-                hardwareAddress = current.getHardwareAddress();
+                try {
+                    hardwareAddress = current.getHardwareAddress();
+                } catch (SocketException socketException) {
+                    final String loop = current.isLoopback() ? "TRUE" : "FALSE";
+                    System.err.println("Failed on: " + current.getName()
+                            + " => " + loop);
+                    throw socketException;
+                }
 
                 if (hardwareAddress == null) {
                     continue;
