@@ -102,6 +102,8 @@ public class NetworkInterfaceInfo {
      *
      *
      */
+    // TODO: Remove SuppressWarnings
+    @SuppressWarnings("PMD.SystemPrintln")
     public String getNameByMacAddress(final BigInteger macAddress) throws SocketException {
 
         // Fetch list of interfaces on the device and iterate
@@ -111,7 +113,15 @@ public class NetworkInterfaceInfo {
             while (interfaces.hasMoreElements()) {
                 final NetworkInterface current = interfaces.nextElement();
 
-                final byte[] hardwareAddress = current.getHardwareAddress();
+                byte[] hardwareAddress = null;
+                try {
+                    hardwareAddress = current.getHardwareAddress();
+                } catch (SocketException socketException) {
+                    System.err.println("Failed on: " + current.getName()
+                            + " => " + current.toString());
+                    throw socketException;
+                }
+
                 if (hardwareAddress == null) {
                     continue;
                 }
