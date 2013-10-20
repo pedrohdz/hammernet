@@ -122,7 +122,6 @@ public class NetworkInterfaceInfo {
                             + "isPointToPoint:" + current.isPointToPoint();
                     System.out.println(error);
                     System.out.flush();
-                    throw new IllegalStateException(error);
                 }
 
                 if (hardwareAddress == null) {
