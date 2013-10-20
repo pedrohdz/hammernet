@@ -99,8 +99,6 @@ public class NetworkInterfaceInfo {
      * href="http://stackoverflow.com/questions/4677684/wifi-network-interface-name/18657669#18657669">
      * Stackoverflow: wifi network interface name</a> - for more information.
      * <!-- CHECKSTYLE.ON: LineLength -->
-     *
-     *
      */
     // TODO: Remove SuppressWarnings
     @SuppressWarnings("PMD.SystemPrintln")
