@@ -122,6 +122,8 @@ public class NetworkInterfaceInfo {
                             + "isLoopback:" + current.isLoopback()
                             + "isVirtual:" + current.isVirtual()
                             + "isPointToPoint:" + current.isPointToPoint();
+                    System.out.println(error);
+                    System.out.flush();
                     throw new IllegalStateException(error);
                 }
 
